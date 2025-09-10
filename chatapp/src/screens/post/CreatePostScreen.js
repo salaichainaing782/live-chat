@@ -3,12 +3,12 @@ import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert, Scro
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
-import apiClient from '../../api/client'; // Import apiClient
+import apiClient from '../../api/client';
 
 export default function CreatePostScreen({ route, navigation }) {
   const { imageUri } = route.params || {};
   const [caption, setCaption] = useState('');
-  const [location, setLocation] = useState(''); // Location is not used in backend yet
+  const [location, setLocation] = useState('');
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const { theme } = useTheme();
@@ -24,11 +24,16 @@ export default function CreatePostScreen({ route, navigation }) {
       const formData = new FormData();
       formData.append('content', caption);
       
+      // Also append location if it exists
+      if (location) {
+        formData.append('location', location);
+      }
+
       if (imageUri) {
         const filename = imageUri.split('/').pop();
         const match = /\.(\w+)$/.exec(filename);
         const type = match ? `image/${match[1]}` : `image`;
-        formData.append('images', { uri: imageUri, name: filename, type });
+        formData.append('image', { uri: imageUri, name: filename, type });
       }
 
       const response = await apiClient.post('/posts', formData, {
@@ -204,10 +209,10 @@ export default function CreatePostScreen({ route, navigation }) {
       <ScrollView style={styles.content}>
         <View style={styles.userInfo}>
           <Image 
-            source={{ uri: user.avatar || 'https://via.placeholder.com/40' }} // Use user.avatar
+            source={{ uri: user.avatar || 'https://via.placeholder.com/40' }} 
             style={styles.avatar}
           />
-          <Text style={styles.username}>{user.username}</Text> // Use user.username
+          <Text style={styles.username}>{user.username}</Text>
         </View>
 
         {imageUri && (
@@ -254,12 +259,12 @@ export default function CreatePostScreen({ route, navigation }) {
             <Ionicons name="people-outline" size={20} color={theme.textSecondary} />
             <Text style={styles.optionText}>Tag People</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity style={styles.optionItem}>
             <Ionicons name="musical-notes-outline" size={20} color={theme.textSecondary} />
             <Text style={styles.optionText}>Add Music</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity style={styles.optionItem}>
             <Ionicons name="happy-outline" size={20} color={theme.textSecondary} />
             <Text style={styles.optionText}>Feeling/Activity</Text>

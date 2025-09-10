@@ -10,7 +10,7 @@ const { width } = Dimensions.get('window');
 export default function PostCard({ post }) {
   const { user } = useAuth();
   const { theme } = useTheme();
-  const [liked, setLiked] = useState(post.likes?.includes(user?.id)); // Use user.id
+  const [liked, setLiked] = useState(post.likes?.includes(user?.id));
   const [likesCount, setLikesCount] = useState(post.likes?.length || 0);
 
   const handleLike = async () => {
@@ -22,7 +22,7 @@ export default function PostCard({ post }) {
       const response = await apiClient.put(`/posts/${post._id}/like`);
       if (response.status === 200) {
         setLiked(!liked);
-        setLikesCount(response.data.likes.length); // Update count from response
+        setLikesCount(response.data.likes.length);
       }
     } catch (error) {
       console.error('Failed to like post', error.response?.data || error.message);
@@ -89,13 +89,13 @@ export default function PostCard({ post }) {
     <View style={styles.container}>
       <View style={styles.header}>
         <Image 
-          source={{ uri: post.author.avatar || 'https://via.placeholder.com/40' }} // Use post.author.avatar
+          source={{ uri: post.author.avatar || 'https://via.placeholder.com/40' }}
           style={styles.avatar}
         />
         <View style={styles.userInfo}>
-          <Text style={styles.username}>{post.author.username}</Text> // Use post.author.username
+          <Text style={styles.username}>{post.author.username}</Text>
           <Text style={styles.timestamp}>
-            {new Date(post.createdAt).toLocaleDateString() || 'Now'} // Format date
+            {new Date(post.createdAt).toLocaleDateString() || 'Now'}
           </Text>
         </View>
         <TouchableOpacity>

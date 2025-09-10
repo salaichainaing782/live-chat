@@ -120,26 +120,21 @@ export default function AIAssistant({ onClose, onSendMessage }) {
     featureIcon: {
       marginRight: 15,
     },
-    featureText: {
-      flex: 1,
-    },
     featureTitle: {
       fontWeight: 'bold',
       color: theme.text,
       marginBottom: 2,
     },
     featureDescription: {
-      color: theme.textSecondary,
+      color: theme.text,
       fontSize: 12,
     },
   });
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={onClose}>
-          <Ionicons name="close" size={24} color={theme.text} />
-        </TouchableOpacity>
+      <View style={styles.header}>        
+        <TouchableOpacity onPress={onClose}><Ionicons name="close" size={24} color={theme.text} /></TouchableOpacity>
         <Text style={styles.title}>AI Assistant</Text>
         <Ionicons name="sparkles" size={24} color={theme.primary} />
       </View>
@@ -163,26 +158,20 @@ export default function AIAssistant({ onClose, onSendMessage }) {
           
           <TouchableOpacity style={styles.aiFeature}>
             <Ionicons name="language-outline" size={24} color={theme.primary} style={styles.featureIcon} />
-            <View style={styles.featureText}>
-              <Text style={styles.featureTitle}>Smart Translation</Text>
-              <Text style={styles.featureDescription}>Translate messages in real-time</Text>
-            </View>
+            <Text style={styles.featureTitle}>Smart Translation</Text>
+            <Text style={styles.featureDescription}>Translate messages in real-time</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.aiFeature}>
             <Ionicons name="bulb-outline" size={24} color={theme.primary} style={styles.featureIcon} />
-            <View style={styles.featureText}>
-              <Text style={styles.featureTitle}>Message Suggestions</Text>
-              <Text style={styles.featureDescription}>Get contextual reply suggestions</Text>
-            </View>
+            <Text style={styles.featureTitle}>Message Suggestions</Text>
+            <Text style={styles.featureDescription}>Get contextual reply suggestions</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.aiFeature}>
             <Ionicons name="happy-outline" size={24} color={theme.primary} style={styles.featureIcon} />
-            <View style={styles.featureText}>
-              <Text style={styles.featureTitle}>Tone Analysis</Text>
-              <Text style={styles.featureDescription}>Analyze message sentiment</Text>
-            </View>
+            <Text style={styles.featureTitle}>Tone Analysis</Text>
+            <Text style={styles.featureDescription}>Analyze message sentiment</Text>
           </TouchableOpacity>
         </View>
 

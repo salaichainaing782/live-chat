@@ -107,12 +107,12 @@ export default function FeedScreen({ navigation }) {
         showsVerticalScrollIndicator={false}
       />
 
-      <TouchableOpacity 
+      {/* <TouchableOpacity 
         style={styles.fab}
         onPress={() => navigation.navigate('CreatePost')}
       >
         <Ionicons name="add" size={28} color="#ffffff" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }

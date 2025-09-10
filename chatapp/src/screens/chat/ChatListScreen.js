@@ -109,7 +109,14 @@ export default function ChatListScreen({ navigation }) {
   });
 
   const renderChatItem = ({ item }) => {
-    const otherParticipant = item.participants.find(p => p !== user.uid);
+    // Safely find the other participant only if the user object exists
+    const otherParticipant = user ? item.participants.find(p => p !== user.uid) : null;
+
+    const getDisplayTime = () => {
+      if (!item.lastMessageTime) return '';
+      const date = new Date(item.lastMessageTime);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
     
     return (
       <TouchableOpacity 
@@ -127,9 +134,7 @@ export default function ChatListScreen({ navigation }) {
           </Text>
         </View>
         <View style={styles.timeContainer}>
-          <Text style={styles.time}>
-            {item.lastMessageTime?.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) || ''}
-          </Text>
+          <Text style={styles.time}>{getDisplayTime()}</Text>
           {item.unreadCount > 0 && (
             <View style={styles.unreadBadge}>
               <Text style={styles.unreadText}>{item.unreadCount}</Text>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Switch, FlatList } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Switch, FlatList, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useAuth } from '../../context/AuthContext';
@@ -8,6 +8,7 @@ import { useTheme } from '../../context/ThemeContext';
 export default function ProfileScreen({ navigation }) {
   const [userPosts, setUserPosts] = useState([]);
   const [stats, setStats] = useState({ posts: 0, followers: 0, following: 0 });
+  const [activeTab, setActiveTab] = useState('grid');
   const { user, logout } = useAuth();
   const { theme, isDark, toggleTheme, isSystemTheme, setSystemTheme } = useTheme();
 
@@ -19,10 +20,13 @@ export default function ProfileScreen({ navigation }) {
       { id: '3', imageUrl: 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=300&h=300&fit=crop' },
       { id: '4', imageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=300&fit=crop' },
       { id: '5', imageUrl: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=300&h=300&fit=crop' },
-      { id: '6', imageUrl: 'https://images.unsplash.com/photo-1493770348161-369560ae357d?w=300&h=300&fit=crop' }
+      { id: '6', imageUrl: 'https://images.unsplash.com/photo-1493770348161-369560ae357d?w=300&h=300&fit=crop' },
+      { id: '7', imageUrl: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=300&h=300&fit=crop' },
+      { id: '8', imageUrl: 'https://images.unsplash.com/photo-1485988412941-77a35537dae4?w=300&h=300&fit=crop' },
+      { id: '9', imageUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=300&h=300&fit=crop' }
     ];
     setUserPosts(mockUserPosts);
-    setStats({ posts: 6, followers: 128, following: 95 });
+    setStats({ posts: 9, followers: 128, following: 95 });
   }, []);
 
   const styles = StyleSheet.create({
@@ -39,10 +43,22 @@ export default function ProfileScreen({ navigation }) {
       borderBottomWidth: 1,
       borderBottomColor: theme.border,
     },
+    headerLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
     username: {
       fontSize: 20,
       fontWeight: 'bold',
       color: theme.text,
+      marginLeft: 10,
+    },
+    headerIcons: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    iconButton: {
+      marginLeft: 15,
     },
     profileSection: {
       padding: 20,
@@ -53,11 +69,28 @@ export default function ProfileScreen({ navigation }) {
       alignItems: 'center',
       marginBottom: 20,
     },
+    avatarContainer: {
+      position: 'relative',
+    },
     avatar: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
-      backgroundColor: theme.surface,
+      width: 86,
+      height: 86,
+      borderRadius: 43,
+      borderWidth: 2,
+      borderColor: theme.primary,
+    },
+    addStoryButton: {
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+      backgroundColor: theme.primary,
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 2,
+      borderColor: theme.card,
     },
     profileInfo: {
       flex: 1,
@@ -72,16 +105,21 @@ export default function ProfileScreen({ navigation }) {
     bio: {
       color: theme.textSecondary,
       fontSize: 14,
+      marginBottom: 5,
+    },
+    website: {
+      color: theme.primary,
+      fontSize: 14,
+      fontWeight: '500',
     },
     statsContainer: {
       flexDirection: 'row',
-      justifyContent: 'space-around',
+      justifyContent: 'space-between',
       paddingVertical: 15,
-      borderTopWidth: 1,
-      borderTopColor: theme.border,
     },
     statItem: {
       alignItems: 'center',
+      flex: 1,
     },
     statNumber: {
       fontSize: 18,
@@ -99,14 +137,16 @@ export default function ProfileScreen({ navigation }) {
     },
     button: {
       flex: 1,
-      backgroundColor: theme.primary,
       padding: 10,
       borderRadius: 8,
       alignItems: 'center',
       marginHorizontal: 5,
     },
+    buttonPrimary: {
+      backgroundColor: theme.primary,
+    },
     buttonSecondary: {
-      backgroundColor: theme.surface,
+      backgroundColor: 'transparent',
       borderWidth: 1,
       borderColor: theme.border,
     },
@@ -116,6 +156,33 @@ export default function ProfileScreen({ navigation }) {
     },
     buttonTextSecondary: {
       color: theme.text,
+      fontWeight: 'bold',
+    },
+    highlightsContainer: {
+      paddingVertical: 10,
+      paddingHorizontal: 5,
+      backgroundColor: theme.card,
+    },
+    highlightsScroll: {
+      paddingHorizontal: 5,
+    },
+    highlightItem: {
+      alignItems: 'center',
+      marginRight: 15,
+    },
+    highlightCircle: {
+      width: 70,
+      height: 70,
+      borderRadius: 35,
+      borderWidth: 1,
+      borderColor: theme.border,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 5,
+    },
+    highlightTitle: {
+      fontSize: 12,
+      color: theme.textSecondary,
     },
     tabContainer: {
       flexDirection: 'row',
@@ -129,28 +196,37 @@ export default function ProfileScreen({ navigation }) {
       alignItems: 'center',
     },
     activeTab: {
-      borderBottomWidth: 2,
-      borderBottomColor: theme.primary,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.text,
+    },
+    tabIcon: {
+      opacity: 0.6,
+    },
+    activeTabIcon: {
+      opacity: 1,
     },
     postsGrid: {
       flex: 1,
-      paddingHorizontal: 2,
     },
     postItem: {
-      width: '32%',
+      width: '33%',
       aspectRatio: 1,
-      backgroundColor: theme.surface,
-      borderRadius: 8,
-      marginBottom: 4,
+      margin: 0.5,
     },
     postImage: {
       width: '100%',
       height: '100%',
-      borderRadius: 8,
+    },
+    postsContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      paddingHorizontal: 0.5,
     },
     settingsSection: {
       backgroundColor: theme.card,
       marginTop: 10,
+      borderTopWidth: 1,
+      borderTopColor: theme.border,
     },
     settingItem: {
       flexDirection: 'row',
@@ -182,38 +258,67 @@ export default function ProfileScreen({ navigation }) {
       fontWeight: 'bold',
       fontSize: 16,
     },
+    emptyState: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 40,
+    },
+    emptyStateText: {
+      color: theme.textSecondary,
+      marginTop: 10,
+    },
   });
 
   const renderPost = ({ item }) => (
     <TouchableOpacity style={styles.postItem}>
-      {item.imageUrl ? (
-        <Image source={{ uri: item.imageUrl }} style={styles.postImage} />
-      ) : (
-        <View style={[styles.postImage, { justifyContent: 'center', alignItems: 'center' }]}>
-          <Ionicons name="text" size={24} color={theme.textSecondary} />
-        </View>
-      )}
+      <Image source={{ uri: item.imageUrl }} style={styles.postImage} />
+    </TouchableOpacity>
+  );
+
+  const renderHighlight = (item, index) => (
+    <TouchableOpacity key={index} style={styles.highlightItem}>
+      <View style={styles.highlightCircle}>
+        <Ionicons name="add-circle" size={24} color={theme.textSecondary} />
+      </View>
+      <Text style={styles.highlightTitle}>New</Text>
     </TouchableOpacity>
   );
 
   const renderHeader = () => (
     <>
       <View style={styles.header}>
-        <Text style={styles.username}>{user?.displayName || 'Profile'}</Text>
-        <TouchableOpacity>
-          <Ionicons name="settings-outline" size={24} color={theme.text} />
-        </TouchableOpacity>
+        <View style={styles.headerLeft}>
+          <Ionicons name="lock-closed-outline" size={16} color={theme.text} />
+          <Text style={styles.username}>{user?.displayName || 'username'}</Text>
+        </View>
+        <View style={styles.headerIcons}>
+          <TouchableOpacity 
+            style={styles.iconButton}
+            onPress={() => navigation.navigate('CreatePost')}
+          >
+            <Ionicons name="add" size={24} color={theme.text} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton}>
+            <Ionicons name="menu-outline" size={24} color={theme.text} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.profileSection}>
         <View style={styles.profileHeader}>
-          <Image 
-            source={{ uri: user?.photoURL || 'https://via.placeholder.com/80' }}
-            style={styles.avatar}
-          />
+          <View style={styles.avatarContainer}>
+            <Image 
+              source={{ uri: user?.photoURL || 'https://via.placeholder.com/86' }}
+              style={styles.avatar}
+            />
+            <TouchableOpacity style={styles.addStoryButton}>
+              <Ionicons name="add" size={16} color="#ffffff" />
+            </TouchableOpacity>
+          </View>
           <View style={styles.profileInfo}>
             <Text style={styles.displayName}>{user?.displayName}</Text>
-            <Text style={styles.bio}>Living life to the fullest ✨</Text>
+            <Text style={styles.bio}>Digital creator | Photography enthusiast</Text>
+            <Text style={styles.website}>www.example.com</Text>
           </View>
         </View>
 
@@ -233,24 +338,60 @@ export default function ProfileScreen({ navigation }) {
         </View>
 
         <View style={styles.actionButtons}>
-          <TouchableOpacity style={[styles.button, styles.buttonSecondary]}>
-            <Text style={[styles.buttonText, styles.buttonTextSecondary]}>Edit Profile</Text>
+          <TouchableOpacity style={[styles.button, styles.buttonPrimary]}>
+            <Text style={styles.buttonText}>Follow</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.button, styles.buttonSecondary]}>
-            <Text style={[styles.buttonText, styles.buttonTextSecondary]}>Share Profile</Text>
+            <Text style={styles.buttonTextSecondary}>Message</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, styles.buttonSecondary]}>
+            <Ionicons name="person-add-outline" size={16} color={theme.text} />
           </TouchableOpacity>
         </View>
       </View>
 
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false}
+        style={styles.highlightsContainer}
+        contentContainerStyle={styles.highlightsScroll}
+      >
+        {[1, 2, 3, 4].map((_, index) => renderHighlight(_, index))}
+      </ScrollView>
+
       <View style={styles.tabContainer}>
-        <TouchableOpacity style={[styles.tab, styles.activeTab]}>
-          <Ionicons name="grid-outline" size={20} color={theme.primary} />
+        <TouchableOpacity 
+          style={[styles.tab, activeTab === 'grid' && styles.activeTab]} 
+          onPress={() => setActiveTab('grid')}
+        >
+          <Ionicons 
+            name="grid-outline" 
+            size={24} 
+            color={theme.text} 
+            style={[styles.tabIcon, activeTab === 'grid' && styles.activeTabIcon]} 
+          />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tab}>
-          <Ionicons name="bookmark-outline" size={20} color={theme.textSecondary} />
+        <TouchableOpacity 
+          style={[styles.tab, activeTab === 'reels' && styles.activeTab]} 
+          onPress={() => setActiveTab('reels')}
+        >
+          <Ionicons 
+            name="play-circle-outline" 
+            size={24} 
+            color={theme.text} 
+            style={[styles.tabIcon, activeTab === 'reels' && styles.activeTabIcon]} 
+          />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tab}>
-          <Ionicons name="person-outline" size={20} color={theme.textSecondary} />
+        <TouchableOpacity 
+          style={[styles.tab, activeTab === 'tags' && styles.activeTab]} 
+          onPress={() => setActiveTab('tags')}
+        >
+          <Ionicons 
+            name="person-outline" 
+            size={24} 
+            color={theme.text} 
+            style={[styles.tabIcon, activeTab === 'tags' && styles.activeTabIcon]} 
+          />
         </TouchableOpacity>
       </View>
     </>
@@ -278,9 +419,9 @@ export default function ProfileScreen({ navigation }) {
             <Text style={styles.settingText}>Use System Theme</Text>
           </View>
           <Ionicons 
-            name={isSystemTheme ? "checkmark" : "chevron-forward"} 
+            name={isSystemTheme ? "checkmark-circle" : "chevron-forward"} 
             size={20} 
-            color={theme.textSecondary} 
+            color={isSystemTheme ? theme.primary : theme.textSecondary} 
           />
         </TouchableOpacity>
 
@@ -302,7 +443,7 @@ export default function ProfileScreen({ navigation }) {
       </View>
 
       <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-        <Text style={styles.logoutText}>Logout</Text>
+        <Text style={styles.logoutText}>Log Out</Text>
       </TouchableOpacity>
     </>
   );
@@ -314,10 +455,11 @@ export default function ProfileScreen({ navigation }) {
         renderItem={renderPost}
         keyExtractor={(item) => item.id}
         numColumns={3}
-        columnWrapperStyle={{ justifyContent: 'space-between' }}
+        columnWrapperStyle={styles.postsContainer}
         ListHeaderComponent={renderHeader}
         ListFooterComponent={renderFooter}
-        contentContainerStyle={{ paddingHorizontal: 2 }}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );

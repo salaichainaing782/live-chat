@@ -64,8 +64,20 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
       return { success: true };
     } catch (error) {
-      console.error('Registration failed', error.response?.data || error.message);
-      return { success: false, message: error.response?.data?.message || 'Registration failed' };
+      // More detailed error logging
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error('Registration Error - Server Response:', error.response.data);
+        return { success: false, message: error.response.data.message || 'Registration failed due to server error.' };
+      } else if (error.request) {
+        // The request was made but no response was received (e.g., network error)
+        console.error('Registration Error - No Response (Network Error):', error.request);
+        return { success: false, message: 'Network error. Please check your connection and try again.' };
+      }
+      // Something happened in setting up the request that triggered an Error
+      console.error('Registration Error - Request Setup:', error.message);
+      return { success: false, message: 'An unexpected error occurred.' };
     } finally {
       setLoading(false);
     }
